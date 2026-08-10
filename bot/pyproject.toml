@@ -1,0 +1,30 @@
+[project]
+name = "pdp-bot"
+version = "0.1.0"
+description = "Протокол личного распада — телеграм-бот"
+requires-python = ">=3.11"
+dependencies = [
+    "aiogram>=3.13",
+    "aiosqlite>=0.20",
+    "asyncpg>=0.30",
+    "httpx>=0.27",
+    "pydantic-settings>=2.4",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "ruff>=0.6"]
+
+[project.scripts]
+pdp-bot = "app.main:main"
+pdp-doctor = "app.doctor:main"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
