@@ -15,6 +15,10 @@ from .memory import memory
 from .tracking import TrackingMiddleware
 
 COMMANDS = [
+    BotCommand(command="note", description="записать в журнал"),
+    BotCommand(command="journal", description="показать журнал"),
+    BotCommand(command="find", description="искать по журналу"),
+    BotCommand(command="spravka", description="справка за неделю картинкой"),
     BotCommand(command="pulse", description="краш-тест дня"),
     BotCommand(command="fork", description="развилка: две ветки и цена каждой"),
     BotCommand(command="seal", description="запечатать ветку"),

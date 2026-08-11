@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     llm_max_tokens: int = 700
     llm_timeout: float = 60.0
 
+    # для «ночных обращений» в справке: Бангкок = 7
+    tz_offset: int = 7
     persona: str = "kolodets"
     personas_dir: Path = ROOT / "personas"
     laws_path: Path = ROOT.parent / "docs" / "LAWS.md"

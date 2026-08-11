@@ -4,13 +4,15 @@ from __future__ import annotations
 import asyncio
 import logging
 
+from typing import Any
+
 import httpx
 
 from .config import settings
 
 log = logging.getLogger(__name__)
 
-Message = dict[str, str]
+Message = dict[str, Any]
 
 
 class LLMError(RuntimeError):
@@ -45,6 +47,7 @@ class LLM:
         raise LLMError(str(last))
 
     async def _anthropic(self, system: str, messages: list[Message], temp: float) -> str:
+        # temp намеренно не передаём: новые модели Anthropic его не принимают
         r = await self._client.post(
             (settings.llm_base_url or "https://api.anthropic.com") + "/v1/messages",
             headers={

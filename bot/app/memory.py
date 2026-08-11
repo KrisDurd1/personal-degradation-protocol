@@ -287,7 +287,11 @@ class Memory:
             "SELECT role, content FROM messages WHERE user_id=? ORDER BY id DESC LIMIT ?",
             user_id, n,
         )
-        return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]
+        out = [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]
+        # Anthropic требует, чтобы разговор начинался с реплики человека
+        while out and out[0]["role"] != "user":
+            out.pop(0)
+        return out
 
     # --- журнал ----------------------------------------------------------
     async def log(
@@ -312,6 +316,97 @@ class Memory:
             "AND kind IN ('pulse','fork','seal','audit') ORDER BY id DESC LIMIT ?",
             user_id, limit,
         )
+
+    # --- журнал -----------------------------------------------------------
+    async def notes(self, user_id: int, limit: int = 20) -> list[Any]:
+        return await self._rows(
+            "SELECT ts, payload FROM events WHERE user_id=? AND kind='note' "
+            "ORDER BY id DESC LIMIT ?",
+            user_id, limit,
+        )
+
+    async def entries(self, user_id: int, limit: int = 12) -> list[Any]:
+        """Лента журнала: заметки и ритуалы вперемешку, по времени."""
+        return await self._rows(
+            "SELECT ts, kind, payload FROM events WHERE user_id=? "
+            "AND kind IN ('note','seal','fork','pulse','audit') AND payload IS NOT NULL "
+            "ORDER BY id DESC LIMIT ?",
+            user_id, limit,
+        )
+
+    async def search(self, user_id: int, query: str, limit: int = 10) -> list[Any]:
+        """Ищет и по заметкам, и по своим репликам."""
+        like = f"%{query.lower()}%"
+        notes = await self._rows(
+            "SELECT ts, 'заметка' AS src, payload AS text FROM events "
+            "WHERE user_id=? AND kind='note' AND LOWER(payload) LIKE ? "
+            "ORDER BY id DESC LIMIT ?",
+            user_id, like, limit,
+        )
+        said = await self._rows(
+            "SELECT ts, role AS src, content AS text FROM messages "
+            "WHERE user_id=? AND LOWER(content) LIKE ? ORDER BY id DESC LIMIT ?",
+            user_id, like, limit,
+        )
+        rows = [*notes, *said]
+        rows.sort(key=lambda r: r["ts"], reverse=True)
+        return rows[:limit]
+
+    async def counts(self, user_id: int) -> dict[str, int]:
+        msgs = await self._row(
+            "SELECT COUNT(*) AS n FROM messages WHERE user_id=? AND role='user'", user_id
+        )
+        notes = await self._row(
+            "SELECT COUNT(*) AS n FROM events WHERE user_id=? AND kind='note'", user_id
+        )
+        first = await self._row(
+            "SELECT MIN(ts) AS t FROM messages WHERE user_id=?", user_id
+        )
+        return {
+            "messages": int(msgs["n"]) if msgs else 0,
+            "notes": int(notes["n"]) if notes else 0,
+            "since": (first["t"] or "")[:10] if first else "",
+        }
+
+    async def week(self, user_id: int, days: int = 7) -> dict[str, Any]:
+        """Показания за последние дни — для справки."""
+        from datetime import timedelta
+
+        since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat(timespec="seconds")
+        msgs = await self._rows(
+            "SELECT role, content, ts, persona FROM messages WHERE user_id=? AND ts>=? "
+            "ORDER BY id DESC",
+            user_id, since,
+        )
+        notes = await self._rows(
+            "SELECT payload FROM events WHERE user_id=? AND kind='note' AND ts>=?",
+            user_id, since,
+        )
+        mine = [m for m in msgs if m["role"] == "user"]
+
+        night = 0
+        for m in mine:
+            try:
+                hour = (int(m["ts"][11:13]) + settings.tz_offset) % 24
+            except (ValueError, IndexError):
+                continue
+            if hour < 5:
+                night += 1
+
+        voices: dict[str, int] = {}
+        for m in msgs:
+            if m["persona"]:
+                voices[m["persona"]] = voices.get(m["persona"], 0) + 1
+
+        last = next((m["content"] for m in msgs if m["role"] == "assistant"), "")
+        return {
+            "messages": len(mine),
+            "notes": len(notes),
+            "night": night,
+            "voice": max(voices, key=voices.get) if voices else "",
+            "last": last,
+            "since": since[:10],
+        }
 
     async def wipe(self, user_id: int) -> None:
         for table in ("messages", "events", "users"):
