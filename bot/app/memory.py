@@ -101,11 +101,18 @@ CREATE INDEX IF NOT EXISTS idx_events_user ON events(user_id, id DESC);
 
 MIGRATIONS: dict[str, dict[str, str]] = {
     "users": {
-        "chat_id": "BIGINT", "first_name": "TEXT", "last_name": "TEXT",
-        "language": "TEXT", "is_premium": "INTEGER", "last_seen": "TEXT",
+        "chat_id": "BIGINT", "username": "TEXT", "first_name": "TEXT",
+        "last_name": "TEXT", "language": "TEXT", "is_premium": "INTEGER",
+        "last_seen": "TEXT", "dossier": "TEXT", "turns": "INTEGER",
     },
-    "messages": {"chat_id": "BIGINT", "tg_msg_id": "BIGINT"},
-    "events": {"chat_id": "BIGINT", "username": "TEXT", "message_id": "BIGINT"},
+    "messages": {
+        "chat_id": "BIGINT", "tg_msg_id": "BIGINT", "raw": "TEXT",
+        "persona": "TEXT", "model": "TEXT", "latency_ms": "INTEGER",
+    },
+    "events": {
+        "chat_id": "BIGINT", "username": "TEXT", "message_id": "BIGINT",
+        "payload": "TEXT",
+    },
 }
 
 

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Протокол личного распада</title>
+<meta name="description" content="Четыре голоса, которые не советуют и не утешают. Телеграм-бот и личный журнал наблюдений." />
+<meta name="theme-color" content="#0B0D0F" />
+<meta property="og:title" content="Ответ у тебя уже есть. Не хватает вопроса." />
+<meta property="og:description" content="Четыре голоса, которые не советуют и не утешают." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <a class="mark" href="#s1">ПЛР</a>
+    <span class="status"><i class="beacon"></i>04 голоса</span>
+  </div>
+</header>
+
+<nav class="dots" id="dots" aria-label="Разделы"></nav>
+
+<main>
+  <section class="hero snap" id="s1" data-label="начало">
+    <canvas class="field" id="hero-sky" aria-hidden="true"></canvas>
+    <div class="wrap hero-inner">
+      <h1 data-reveal>Ответ у тебя<br />уже есть.<br /><span class="muted">Не хватает вопроса.</span></h1>
+      <p class="lede" data-reveal>
+        Четыре голоса, которые не советуют и не утешают. Они смотрят на то,
+        что ты пишешь, и возвращают то, что было пропущено.
+      </p>
+      <p class="act" data-reveal>
+        <a class="cta" href="https://t.me/spravka_o_raspade_bot">Выйти на связь</a>
+        <a class="cta ghost" href="https://github.com/KrisDurd1/personal-degradation-protocol">Смотреть код</a>
+      </p>
+    </div>
+    <div class="ripple" id="ripple" aria-hidden="true"></div>
+    <button class="next" type="button" data-next="s2">ниже — что это и зачем</button>
+  </section>
+
+  <section class="wrap block snap" id="s2" data-label="что это">
+    <p class="eyebrow"><i class="tick"></i>что это</p>
+    <h2 data-reveal>Наблюдательный пост<br />на одного человека.</h2>
+    <p class="lede" data-reveal>
+      Пишешь, что происходит. Он снимает показания и отвечает странно, но по делу.
+      Каждый обмен ложится в журнал.
+    </p>
+    <ol class="rules" data-reveal>
+      <li><span class="num">01</span><b>Не советует</b><em>совет и так известен</em></li>
+      <li><span class="num">02</span><b>Не утешает</b><em>описывает, что видит</em></li>
+      <li><span class="num">03</span><b>Ничего не вечно</b><em>состояние, а не приговор</em></li>
+    </ol>
+  </section>
+
+  <section class="wrap block snap" id="s3" data-label="журнал">
+    <p class="eyebrow"><i class="tick"></i>личный журнал</p>
+    <h2 class="h3" data-reveal>Всё остаётся. Только у тебя.</h2>
+    <p class="lede" data-reveal>
+      Бот ведёт журнал одного человека — твой. Никто другой его не видит и не читает.
+      Записи копятся сами, специально ничего вести не надо.
+    </p>
+    <dl class="cmds" id="cmds" data-reveal></dl>
+    <p class="note">Чем длиннее журнал, тем точнее он замечает, что возвращается.</p>
+  </section>
+
+  <section class="wrap block snap" id="s4" data-label="перехвачено">
+    <p class="eyebrow"><i class="tick"></i>перехвачено</p>
+    <ul class="intercepts" id="intercepts" data-reveal></ul>
+  </section>
+
+  <section class="wrap block snap" id="s5" data-label="голоса">
+    <p class="eyebrow"><i class="tick"></i>кто говорит</p>
+    <h2 class="h3" data-reveal>Четыре голоса</h2>
+    <p class="lede" data-reveal>Величина объекта — насколько голос основной. Переключаются в чате.</p>
+
+    <div class="sky" id="sky" data-reveal>
+      <canvas class="field" id="voice-sky" aria-hidden="true"></canvas>
+      <div class="stars" id="stars" role="group" aria-label="Четыре голоса"></div>
+      <div class="crosshair" id="crosshair" aria-hidden="true"></div>
+    </div>
+
+    <article class="card" aria-live="polite" data-reveal>
+      <p class="card-top"><span class="code" id="v-code"></span><span class="mag" id="v-mag"></span></p>
+      <h3 id="v-name"></h3>
+      <p class="about" id="v-about"></p>
+      <ul class="tags" id="v-tags"></ul>
+      <p class="sample" id="v-sample"></p>
+      <p class="fine">в чате: <code id="v-cmd"></code></p>
+    </article>
+  </section>
+
+  <footer class="wrap foot">
+    <p><a href="https://github.com/KrisDurd1/personal-degradation-protocol">Исходники и законы голоса</a></p>
+    <p class="note">Всё обратимо, пока измеряется.</p>
+  </footer>
+</main>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

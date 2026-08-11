@@ -26,8 +26,9 @@ data/
 .env.example
 START.md
 docs/VOICES.md
-web/
 .vscode/
 Makefile
 docker-compose.yml
 bot/tests/
+web/node_modules/
+web/dist/
